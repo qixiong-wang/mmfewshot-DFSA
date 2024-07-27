@@ -12,7 +12,7 @@ from mmseg.models.decode_heads.decode_head import BaseDecodeHead
 from mmseg.utils import get_root_logger
 
 
-@TRANSFORMER_LAYER.register_module()
+# @TRANSFORMER_LAYER.register_module()
 class KernelUpdator(nn.Module):
     """Dynamic Kernel Updator in Kernel Update Head.
 
@@ -139,7 +139,7 @@ class KernelUpdator(nn.Module):
         return features
 
 
-@HEADS.register_module()
+# @HEADS.register_module()
 class KernelUpdateHead(nn.Module):
     """Kernel Update Head in K-Net.
 
@@ -391,7 +391,7 @@ class KernelUpdateHead(nn.Module):
             self.conv_kernel_size)
 
 
-@HEADS.register_module()
+# @HEADS.register_module()
 class IterativeDecodeHead(BaseDecodeHead):
     """K-Net: Towards Unified Image Segmentation.
 

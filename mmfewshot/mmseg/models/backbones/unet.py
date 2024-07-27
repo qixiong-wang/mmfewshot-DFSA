@@ -86,7 +86,7 @@ class BasicConvBlock(nn.Module):
         return out
 
 
-@UPSAMPLE_LAYERS.register_module()
+# @UPSAMPLE_LAYERS.register_module()
 class DeconvModule(nn.Module):
     """Deconvolution upsample module in decoder for UNet (2X upsample).
 
@@ -147,7 +147,7 @@ class DeconvModule(nn.Module):
         return out
 
 
-@UPSAMPLE_LAYERS.register_module()
+# @UPSAMPLE_LAYERS.register_module()
 class InterpConv(nn.Module):
     """Interpolation upsample module in decoder for UNet.
 

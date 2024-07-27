@@ -8,7 +8,7 @@ from mmseg.models.decode_heads.decode_head import BaseDecodeHead
 from mmseg.ops import resize
 
 
-@HEADS.register_module()
+# @HEADS.register_module()
 class SegformerHead(BaseDecodeHead):
     """The all mlp Head of segformer.
 

@@ -20,7 +20,6 @@ from .builder import DATASETS
 
 import torch
 
-from mmfewshot.detection.core import eval_map
 from .custom import CustomDataset
 
 

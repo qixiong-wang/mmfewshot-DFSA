@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch.nn as nn
 import torch.nn.functional as F
-from mmfewshot.detection.models.utils import SepFPNConvModule
+from mmfewshot.mmseg.models.utils.sep_fpn_conv import SepFPNConvModule
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule, auto_fp16
 

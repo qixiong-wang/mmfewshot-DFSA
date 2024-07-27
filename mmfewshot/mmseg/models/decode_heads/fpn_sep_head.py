@@ -7,9 +7,9 @@ from mmseg.ops import Upsample, resize
 from ..builder import HEADS
 from .decode_head import BaseDecodeHead
 import torch
-from mmfewshot.detection.models.loha.loha import LohaModule
+from mmfewshot.mmseg.models.utils.loha import LohaModule
 from .fpn_head import FPNHead
-from mmfewshot.detection.models.utils import SepFPNConvModule
+from mmfewshot.mmseg.models.utils.sep_fpn_conv import SepFPNConvModule
 import torch.nn.functional as F
 @HEADS.register_module()
 class SepFPNHead(BaseDecodeHead):

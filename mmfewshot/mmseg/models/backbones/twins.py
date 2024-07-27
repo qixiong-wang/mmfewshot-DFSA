@@ -349,7 +349,7 @@ class ConditionalPositionEncoding(BaseModule):
         return x
 
 
-@BACKBONES.register_module()
+# @BACKBONES.register_module()
 class PCPVT(BaseModule):
     """The backbone of Twins-PCPVT.
 
@@ -508,7 +508,7 @@ class PCPVT(BaseModule):
         return tuple(outputs)
 
 
-@BACKBONES.register_module()
+# @BACKBONES.register_module()
 class SVT(PCPVT):
     """The backbone of Twins-SVT.
 

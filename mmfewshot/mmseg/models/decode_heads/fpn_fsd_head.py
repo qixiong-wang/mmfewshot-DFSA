@@ -175,7 +175,7 @@ class FPN_FSDHead(BaseDecodeHead):
                     ignore_index=self.ignore_index)
         # import pdb; pdb.set_trace()
         
-        loss['fg_loss']= F.binary_cross_entropy(fg_output.squeeze(), fg_label.float())
+        loss['fg_loss']= F.binary_cross_entropy(fg_output.squeeze(1), fg_label.float())
         loss['acc_seg'] = accuracy(
             seg_logit, seg_label, ignore_index=self.ignore_index)
         loss['acc_seg_fg'] = accuracy(
