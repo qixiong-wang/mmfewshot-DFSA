@@ -41,7 +41,7 @@ import os
 
 import torch
 from mmcv.runner.utils import set_random_seed
-from mmfewshot.detection.models.loha.loha import LohaModule
+from mmfewshot.mmseg.models.utils.loha import LohaModule
 
 # COCO config
 COCO_NOVEL_CLASSES = [
@@ -277,7 +277,7 @@ def main():
     args = parse_args()
     set_random_seed(args.seed)
     checkpoint = torch.load(args.src1)
-    save_name = args.tar_name + f'_{args.method}_nwpu_split1_decode_head.pth'
+    save_name = args.tar_name + f'_{args.method}_isaid_split2_decode_head.pth'
     save_dir = args.save_dir \
         if args.save_dir != '' else os.path.dirname(args.src1)
     save_path = os.path.join(save_dir, save_name)
@@ -299,6 +299,7 @@ def main():
             del checkpoint['state_dict'][param_name + '.weight']
             if param_name + '.bias' in checkpoint['state_dict']:
                 del checkpoint['state_dict'][param_name + '.bias']
+
     elif args.method == 'combine':
         checkpoint2 = torch.load(args.src2)
         # tar_sizes = [TAR_SIZE + 1, TAR_SIZE * 4]

@@ -10,8 +10,8 @@ data = dict(
         data_root='data/iSAID/converted',
         img_dir='img_dir/train',
         ann_dir='ann_dir/train',
-        num_novel_shots=5,
-        num_base_shots=5,
+        num_novel_shots=1,
+        num_base_shots=1,
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations'),
@@ -133,7 +133,7 @@ model = dict(
 
 checkpoint_config = dict(interval=2000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
-custom_hooks = [dict(type='NumClassCheckHook')]
+
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 resume_from = None
@@ -166,5 +166,5 @@ lr_config = dict(
     by_epoch=False)
 runner = dict(type='IterBasedRunner', max_iters=10000)
 
-work_dir = 'work_dirs/isaid/finetune/tfa_r101_fsd_fpn_isaid-split2_5shot-fine-tuning_resize-0'
+work_dir = 'work_dirs/isaid/finetune/split2/finetune_r101_fpn_fsd_isaid-split2_1shot-tfa-0'
 gpu_ids = range(0, 2)

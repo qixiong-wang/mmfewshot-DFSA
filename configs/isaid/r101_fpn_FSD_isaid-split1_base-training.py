@@ -119,7 +119,7 @@ model = dict(
 
 checkpoint_config = dict(interval=16000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
-custom_hooks = [dict(type='NumClassCheckHook')]
+
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
@@ -127,7 +127,7 @@ resume_from = None
 workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
-evaluation = dict(interval=16000, metric=['mIoU', 'mFscore'])
+evaluation = dict(interval=32000, metric=['mIoU', 'mFscore'])
 optimizer = dict(
     type='AdamW',
     lr=6e-05,
@@ -149,5 +149,5 @@ lr_config = dict(
     by_epoch=False)
 runner = dict(type='IterBasedRunner', max_iters=80000)
 
-work_dir = 'work_dirs/isaid/base_training/split1/r101_fpn_FSD_isaid-split1_base-training'
+work_dir = 'work_dirs/isaid/base_training/split1/r101_fpn_fsd_isaid-split1_base-training-0'
 gpu_ids = range(0, 2)

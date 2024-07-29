@@ -46,6 +46,8 @@ data = dict(
         data_root='data/NWPU_VHR_10_VOC',
         img_dir='JPEGImages',
         ann_dir='masks',
+        num_novel_shots=1,
+        num_base_shots=1,
         split='Main/trainval.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -64,7 +66,7 @@ data = dict(
             dict(type='DefaultFormatBundle'),
             dict(type='Collect', keys=['img', 'gt_semantic_seg'])
         ],
-        classes='BASE_CLASSES_SPLIT1',),
+        classes='ALL_CLASSES_SPLIT1',),
     val=dict(
         type='FewShotSSeg_NWPUDataset',
         data_root='data/NWPU_VHR_10_VOC',
@@ -90,7 +92,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        classes='BASE_CLASSES_SPLIT1'),
+        classes='ALL_CLASSES_SPLIT1',),
     test=dict(
         type='FewShotSSeg_NWPUDataset',
         data_root='data/NWPU_VHR_10_VOC',
@@ -117,17 +119,20 @@ data = dict(
                 ])
         ],
         test_mode=True,
-        classes='BASE_CLASSES_SPLIT1'))
-evaluation = dict(interval=5000, metric=['mIoU', 'mFscore'])
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
-optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+        classes='ALL_CLASSES_SPLIT1'))
+evaluation = dict(
+    interval=2000,
+    metric=['mIoU', 'mFscore'],
+    class_splits=['BASE_CLASSES_SPLIT1', 'NOVEL_CLASSES_SPLIT1'])
+optimizer = dict(type='SGD', lr=0.002, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=None)
 lr_config = dict(
     policy='step',
     warmup='linear',
-    warmup_iters=100,
+    warmup_iters=10,
     warmup_ratio=0.001,
-    step=[10000, 15000])
-runner = dict(type='IterBasedRunner', max_iters=20000)\
+    step=[4000,8000])
+runner = dict(type='IterBasedRunner', max_iters=10000)
 
 checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/twins/pcpvt_small_20220308-e638c41c.pth'
 norm_cfg = dict(type='SyncBN', requires_grad=True)
@@ -153,7 +158,6 @@ model = dict(
         num_outs=4),
     decode_head=dict(
         type='FPN_FSDHead',
-        bg_idx = [0,8,9,10],
         in_channels=[256, 256, 256, 256],
         in_index=[0, 1, 2, 3],
         feature_strides=[4, 8, 16, 32],
@@ -167,15 +171,15 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
-checkpoint_config = dict(interval=3000)
+checkpoint_config = dict(interval=2000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
 # custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = None
+load_from = 'work_dirs/nwpu/base_training/r101_fpn_fsd_nwpu-split1_base-training/iter_18000.pth'
 resume_from = None
 workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
-work_dir = 'work_dirs/nwpu/base_training/r101_fpn_fsd_nwpu-split1_base-training'
+work_dir = 'work_dirs/nwpu/finetune/finetune_r101_fpn_fsd_nwpu-split1_1shot_tfa-0'
 gpu_ids = range(0, 2)

@@ -133,7 +133,7 @@ model = dict(
 
 checkpoint_config = dict(interval=2000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
-custom_hooks = [dict(type='NumClassCheckHook')]
+
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 resume_from = None
@@ -141,7 +141,7 @@ workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
 # load_from = 'work_dirs/isaid/base_training/tfa_r101_fpn_isaid-split2_base_training-resize-1gpu-16w-bs8-lr0.005-0/base_model_random_init_nwpu_split1_decode_head.pth'
-load_from = 'work_dirs/isaid/base_training/split3/r101_fpn_fsd_isaid-split3_base-training-0/iter_80000.pth'
+load_from = 'work_dirs/isaid/base_training/split3/r101_fpn_fsd_nwpu-split3_base-training/iter_80000.pth'
 evaluation = dict(interval=2000, metric=['mIoU', 'mFscore'])
 optimizer = dict(
     type='AdamW',
@@ -165,5 +165,5 @@ lr_config = dict(
     by_epoch=False)
 runner = dict(type='IterBasedRunner', max_iters=10000)
 
-work_dir = 'work_dirs/isaid/finetune/split3/tfa_r101_fpn_FSD_isaid-split3_1shot-fine-tuning'
+work_dir = 'work_dirs/isaid/finetune/split3/finetune_r101_fpn_fsd_isaid-split3_1shot-tfa-0'
 gpu_ids = range(0, 2)

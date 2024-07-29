@@ -10,8 +10,8 @@ data = dict(
         data_root='data/iSAID/converted',
         img_dir='img_dir/train',
         ann_dir='ann_dir/train',
-        num_novel_shots=1,
-        num_base_shots=1,
+        num_novel_shots=5,
+        num_base_shots=5,
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations'),
@@ -111,7 +111,9 @@ model = dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
-        num_outs=4),
+        num_outs=4,
+        # sep_cfg=sep_cfg,
+        ),
     decode_head=dict(
         type='FPN_FSDHead',
         # sep_cfg = sep_cfg,
@@ -131,15 +133,15 @@ model = dict(
 
 checkpoint_config = dict(interval=2000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
-custom_hooks = [dict(type='NumClassCheckHook')]
+
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 resume_from = None
 workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
-# load_from = 'work_dirs/isaid/base_training/tfa_r101_fpn_isaid-split1_base_training-resize-1gpu-16w-bs8-lr0.005-0/base_model_random_init_nwpu_split1_decode_head.pth'
-load_from = 'work_dirs/isaid/base_training/split1/r101_fpn_fsd_isaid-split1_base-training-0/iter_80000.pth'
+# load_from = 'work_dirs/isaid/base_training/tfa_r101_fpn_isaid-split2_base_training-resize-1gpu-16w-bs8-lr0.005-0/base_model_random_init_nwpu_split1_decode_head.pth'
+load_from = 'work_dirs/isaid/base_training/split3/r101_fpn_fsd_nwpu-split3_base-training/iter_80000.pth'
 evaluation = dict(interval=2000, metric=['mIoU', 'mFscore'])
 optimizer = dict(
     type='AdamW',
@@ -163,5 +165,5 @@ lr_config = dict(
     by_epoch=False)
 runner = dict(type='IterBasedRunner', max_iters=10000)
 
-work_dir = 'work_dirs/isaid/finetune/split1/configs/isaid/DFSA_r101_fpn_isaid-split1_1shot-fine-tuning'
+work_dir = 'work_dirs/isaid/finetune/split3/finetune_r101_fpn_fsd_isaid-split3_5shot-tfa-0'
 gpu_ids = range(0, 2)

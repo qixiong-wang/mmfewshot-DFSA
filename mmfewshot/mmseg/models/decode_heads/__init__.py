@@ -30,6 +30,7 @@ from .stdc_head import STDCHead
 from .uper_head import UPerHead
 from .fpn_sep_head import SepFPNHead
 from .fpn_fsd_head import FPN_FSDHead
+from .fpn_fsd_sep_head import FPN_FSD_SEPHead
 
 __all__ = [
     'FCNHead', 'PSPHead', 'ASPPHead', 'PSAHead', 'NLHead', 'GCHead', 'CCHead',
@@ -38,5 +39,6 @@ __all__ = [
     'PointHead', 'APCHead', 'DMHead', 'LRASPPHead', 'SETRUPHead',
     'SETRMLAHead', 'DPTHead', 'SETRMLAHead', 'SegmenterMaskTransformerHead',
     'SegformerHead', 'ISAHead', 'STDCHead', 'IterativeDecodeHead',
-    'KernelUpdateHead', 'KernelUpdator', 'SepFPNHead', 'FPN_FSDHead'
+    'KernelUpdateHead', 'KernelUpdator', 'SepFPNHead', 'FPN_FSDHead', 'FPN_FSD_SEPHead'
 ]
+
