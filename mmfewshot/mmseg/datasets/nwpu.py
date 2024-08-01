@@ -10,7 +10,7 @@ from mmcv.utils import print_log
 import cv2
 from .builder import DATASETS
 # from .base import FewShotSeg_BaseUDataset
-
+from ..utils import get_root_logger
 import torch
 
 from .custom import CustomDataset
@@ -103,7 +103,6 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
         
         self.num_novel_shots = num_novel_shots
         self.num_base_shots = num_base_shots
-
         self.CLASSES = self.get_classes(classes)
         super(FewShotSSeg_NWPUDataset, self).__init__(
             img_suffix=img_suffix,
@@ -129,9 +128,10 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
             else:
                 raise TypeError('ann_shot_filter only support dict')
             self.ann_shot_filter = ann_shot_filter
+
             self.img_infos = self._filter_annotations(
                 self.img_infos, self.ann_shot_filter)
-            
+            print_log(f'Load {len(self.img_infos)} images', logger=get_root_logger())
         
     def _create_ann_shot_filter(self) -> Dict[str, int]:
         """Generate `ann_shot_filter` for novel and base classes.
@@ -147,6 +147,7 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
         if self.num_base_shots is not None:
             for class_name in self.SPLIT[f'BASE_CLASSES_SPLIT{self.split_id}']:
                 ann_shot_filter[class_name] = self.num_base_shots
+
         return ann_shot_filter
     
 
@@ -190,7 +191,6 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
                f'split in VOC_SPLIT'
             class_names = self.SPLIT[classes]
             if 'BASE_CLASSES' in classes:
-
                 assert self.num_novel_shots is None, \
                     f'{self.dataset_name}: BASE_CLASSES do not have ' \
                     f'novel instances.'
@@ -228,6 +228,7 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
         # build instance indices of (img_id, gt_idx)
         filter_instances = {key: [] for key in ann_shot_filter.keys()}
         keep_image_indices = []
+
         for idx, img_info in enumerate(img_infos):
             ann = img_info['ann']['seg_map']
             ann_label = np.unique(cv2.imread(os.path.join(self.ann_dir,ann)))
@@ -260,5 +261,7 @@ class FewShotSSeg_NWPUDataset(CustomDataset):
                     dict(
                         filename=img_info['filename'],
                         ann=img_info['ann']))
+                print_log(f'Loaded image name {img_info["filename"]}', logger=get_root_logger())
+        print_log(f'Loaded {len(new_img_infos)} images', logger=get_root_logger())
         new_img_infos = new_img_infos*200
         return new_img_infos

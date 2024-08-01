@@ -152,8 +152,8 @@ class LohaModule(nn.Module):
             alpha = alpha.detach().float().numpy()  # without casting, bf16 causes error
         alpha = lora_dim if alpha is None or alpha == 0 else alpha
         self.scale = alpha / self.lora_dim
-        self.register_buffer('alpha', torch.tensor(alpha)) # 定数として扱える
-
+        self.register_buffer('alpha', torch.tensor(alpha)) 
+        
         if use_scalar:
             self.scalar = nn.Parameter(torch.tensor(0.0))
         else:

@@ -61,11 +61,13 @@ def build_segmentor(cfg, train_cfg=None, test_cfg=None):
     if frozen_parameters is not None:
         print(f'Frozen parameters: {frozen_parameters}')
         for name, param in model.named_parameters():
+            # print(f'Checking {name}')
             for frozen_prefix in frozen_parameters:
-                if frozen_prefix in name and 'hada_w' not in name:
+                if frozen_prefix in name and ('novel' not in name):
                     param.requires_grad = False
             if param.requires_grad:
                 print(f'Training parameters: {name}')
+
         # for name, module in model.named_modules():
         #     for frozen_prefix in frozen_parameters:
         #         if frozen_prefix in name and 'hada_w' not in name:

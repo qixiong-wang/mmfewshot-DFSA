@@ -277,7 +277,7 @@ def main():
     args = parse_args()
     set_random_seed(args.seed)
     checkpoint = torch.load(args.src1)
-    save_name = args.tar_name + f'_{args.method}_isaid_split2_decode_head.pth'
+    save_name = args.tar_name + f'_{args.method}_nwpu_r101_fpn_18000iter.pth'
     save_dir = args.save_dir \
         if args.save_dir != '' else os.path.dirname(args.src1)
     save_path = os.path.join(save_dir, save_name)

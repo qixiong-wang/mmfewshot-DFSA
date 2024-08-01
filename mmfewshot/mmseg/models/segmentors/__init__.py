@@ -2,5 +2,5 @@
 from .base import BaseSegmentor
 from .cascade_encoder_decoder import CascadeEncoderDecoder
 from .encoder_decoder import EncoderDecoder
-
-__all__ = ['BaseSegmentor', 'EncoderDecoder', 'CascadeEncoderDecoder']
+from .sep_encoder_decoder import SepEncoderDecoder
+__all__ = ['BaseSegmentor', 'EncoderDecoder', 'CascadeEncoderDecoder', 'SepEncoderDecoder']
