@@ -87,14 +87,14 @@ checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/twins/
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 sep_cfg = ['neck', 'head']
 model = dict(
-    type='EncoderDecoder',
+    type='SepEncoderDecoder',
     pretrained='open-mmlab://resnet101_v1c',
     frozen_parameters=[
-    'backbone', 
-    'neck', 
-    'decode_head',
+    'backbone_base', 
+    'neck_base', 
+    'decode_head_base',
     ],
-    backbone=dict(
+    backbone_base=dict(
         type='ResNetV1c',
         depth=101,
         num_stages=4,
@@ -106,16 +106,44 @@ model = dict(
         norm_eval=False,
         style='pytorch',
         contract_dilation=True),
-    neck=dict(
-        type='Sep_FPN',
+    backbone_novel=dict(
+        type='ResNetV1c',
+        depth=101,
+        num_stages=4,
+        out_indices=(0, 1, 2, 3),
+        dilations=(1, 1, 1, 2),
+        strides=(1, 2, 2, 1),
+        multi_grid=(1, 2, 4),
+        norm_cfg=dict(type='SyncBN', requires_grad=True),
+        norm_eval=False,
+        style='pytorch',
+        contract_dilation=True),
+    neck_base=dict(
+        type='FPN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=4,
-        sep_cfg=sep_cfg,
         ),
-    decode_head=dict(
-        type='FPN_FSD_SEPHead',
-        sep_cfg = sep_cfg,
+    neck_novel=dict(
+        type='FPN',
+        in_channels=[256, 512, 1024, 2048],
+        out_channels=256,
+        num_outs=4,
+        ),
+    decode_head_base=dict(
+        type='FPN_FSDHead',
+        in_channels=[256, 256, 256, 256],
+        in_index=[0, 1, 2, 3],
+        feature_strides=[4, 8, 16, 32],
+        channels=128,
+        dropout_ratio=0.1,
+        num_classes=16,
+        norm_cfg=dict(type='SyncBN', requires_grad=True),
+        align_corners=False,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
+    decode_head_novel=dict(
+        type='FPN_FSDHead',
         in_channels=[256, 256, 256, 256],
         in_index=[0, 1, 2, 3],
         feature_strides=[4, 8, 16, 32],
@@ -139,7 +167,7 @@ workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
 # load_from = 'work_dirs/isaid/base_training/tfa_r101_fpn_isaid-split2_base_training-resize-1gpu-16w-bs8-lr0.005-0/base_model_random_init_nwpu_split1_decode_head.pth'
-load_from = 'work_dirs/isaid/base_training/split3/r101_fpn_fsd_nwpu-split3_base-training/iter_80000.pth'
+load_from = 'work_dirs/isaid/base_training/split3/r101_fpn_fsd_isaid-split3_base-training-0/iter_80000_novel.pth'
 evaluation = dict(interval=2000, metric=['mIoU', 'mFscore'])
 optimizer = dict(
     type='AdamW',

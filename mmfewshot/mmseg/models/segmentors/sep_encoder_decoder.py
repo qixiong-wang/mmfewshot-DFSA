@@ -31,7 +31,7 @@ class SepEncoderDecoder(BaseSegmentor):
                  test_cfg=None,
                  pretrained=None,
                  init_cfg=None):
-        super(Sep_EncoderDecoder, self).__init__(init_cfg)
+        super(SepEncoderDecoder, self).__init__(init_cfg)
         if pretrained is not None:
             assert backbone_base.get('pretrained') is None, \
                 'both backbone and segmentor set pretrained weight'
@@ -49,13 +49,13 @@ class SepEncoderDecoder(BaseSegmentor):
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
 
-        assert self.with_decode_head
+        # assert self.with_decode_head
 
     def _init_decode_head_base(self, decode_head):
         """Initialize ``decode_head``"""
         self.decode_head_base = builder.build_head(decode_head)
-        self.align_corners = self.decode_head.align_corners
-        self.num_classes = self.decode_head.num_classes
+        self.align_corners = self.decode_head_base.align_corners
+        self.num_classes = self.decode_head_base.num_classes
     
     def _init_decode_head_novel(self, decode_head):
         """Initialize ``decode_head``"""
@@ -77,9 +77,9 @@ class SepEncoderDecoder(BaseSegmentor):
         """Extract features from images."""
         x_base = self.backbone_base(img)
         x_novel = self.backbone_novel(img)
-        if self.with_neck:
-            x_base = self.neck_base(x_base)
-            x_novel = self.neck_novel(x_novel)
+        # if self.with_neck:
+        x_base = self.neck_base(x_base)
+        x_novel = self.neck_novel(x_novel)
         return x_base, x_novel
 
     def encode_decode(self, img, img_metas):

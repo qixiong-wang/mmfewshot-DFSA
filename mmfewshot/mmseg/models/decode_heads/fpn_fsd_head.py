@@ -101,6 +101,7 @@ class FPN_FSDHead(BaseDecodeHead):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
+
         fg_output, seg_logits = self.forward(inputs)
         # print(torch.unique(gt_semantic_seg))
         

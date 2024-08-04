@@ -137,9 +137,14 @@ runner = dict(type='IterBasedRunner', max_iters=10000)
 checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/twins/pcpvt_small_20220308-e638c41c.pth'
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
-    type='EncoderDecoder',
+    type='SepEncoderDecoder',
     pretrained='open-mmlab://resnet101_v1c',
-    backbone=dict(
+    frozen_parameters=[
+    'backbone_base', 
+    'neck_base', 
+    'decode_head_base',
+    ],
+    backbone_base=dict(
         type='ResNetV1c',
         depth=101,
         num_stages=4,
@@ -151,12 +156,43 @@ model = dict(
         norm_eval=False,
         style='pytorch',
         contract_dilation=True),
-    neck=dict(
+    backbone_novel=dict(
+        type='ResNetV1c',
+        depth=101,
+        num_stages=4,
+        out_indices=(0, 1, 2, 3),
+        dilations=(1, 1, 1, 2),
+        strides=(1, 2, 2, 1),
+        multi_grid=(1, 2, 4),
+        norm_cfg=dict(type='SyncBN', requires_grad=True),
+        norm_eval=False,
+        style='pytorch',
+        contract_dilation=True),
+    neck_base=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
-        num_outs=4),
-    decode_head=dict(
+        num_outs=4,
+        ),
+    neck_novel=dict(
+        type='FPN',
+        in_channels=[256, 512, 1024, 2048],
+        out_channels=256,
+        num_outs=4,
+        ),
+    decode_head_base=dict(
+        type='FPN_FSDHead',
+        in_channels=[256, 256, 256, 256],
+        in_index=[0, 1, 2, 3],
+        feature_strides=[4, 8, 16, 32],
+        channels=128,
+        dropout_ratio=0.1,
+        num_classes=11,
+        norm_cfg=dict(type='SyncBN', requires_grad=True),
+        align_corners=False,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
+    decode_head_novel=dict(
         type='FPN_FSDHead',
         in_channels=[256, 256, 256, 256],
         in_index=[0, 1, 2, 3],
@@ -176,10 +212,10 @@ log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
 # custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = 'work_dirs/nwpu/base_training/r101_fpn_fsd_nwpu-split1_base-training/iter_18000.pth'
+load_from = 'work_dirs/nwpu/base_training/r101_fpn_fsd_nwpu-split1_base-training/iter_18000_sep_novel.pth'
 resume_from = None
 workflow = [('train', 1)]
 use_infinite_sampler = False
 seed = 42
-work_dir = 'work_dirs/nwpu/finetune/finetune_r101_fpn_fsd_nwpu-split1_1shot_tfa-0'
+work_dir = 'work_dirs/nwpu/finetune/finetune_r101_fpn_fsd_nwpu-split1_1shot_sep_model-0'
 gpu_ids = range(0, 2)

@@ -131,7 +131,7 @@ model = dict(
         num_outs=4,
         ),
     decode_head_base=dict(
-        type='FPN_FSD_SEPHead',
+        type='FPN_FSDHead',
         in_channels=[256, 256, 256, 256],
         in_index=[0, 1, 2, 3],
         feature_strides=[4, 8, 16, 32],
@@ -143,7 +143,7 @@ model = dict(
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
     decode_head_novel=dict(
-        type='FPN_FSD_SEPHead',
+        type='FPN_FSDHead',
         in_channels=[256, 256, 256, 256],
         in_index=[0, 1, 2, 3],
         feature_strides=[4, 8, 16, 32],

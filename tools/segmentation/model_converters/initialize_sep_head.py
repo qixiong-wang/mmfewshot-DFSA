@@ -1,41 +1,45 @@
 import torch
 
-def convert_checkpoint(original_checkpoint_path, new_checkpoint_path):
-    # 加载原始checkpoint
-    checkpoint = torch.load(original_checkpoint_path, map_location='cpu')
+def convert_checkpoint(old_checkpoint_path, new_checkpoint_path):
+    # 加载旧的checkpoint
+    checkpoint = torch.load(old_checkpoint_path, map_location='cpu')
+    model_state_dict = checkpoint['state_dict']
+
+    # 新的state_dict
     new_state_dict = {}
 
-    for key, value in checkpoint['state_dict'].items():
-        new_state_dict[key] = value
-        
-        # 处理neck和decode_head的novel分支
-        if 'neck' in key or 'decode_head' in key:
-            parts = key.split('.')
-            if 'neck' in key:
-                # 找到第二级名称并替换
-                parts[1] = parts[1] + '_novel'
-                new_key = '.'.join(parts)
-                new_state_dict[new_key] = value
-            elif 'decode_head' in key:
-                # 找到第二级名称并替换
-                parts[1] = parts[1] + '_novel'
-                new_key = '.'.join(parts)
-                new_state_dict[new_key] = value
+    # 处理backbone
+    for key, value in model_state_dict.items():
+        if key.startswith('backbone'):
+            new_key_base = key.replace('backbone', 'backbone_base', 1)
+            new_key_novel = key.replace('backbone', 'backbone_novel', 1)
+            new_state_dict[new_key_base] = value
+            new_state_dict[new_key_novel] = value
 
-    # 创建新的checkpoint
-    new_checkpoint = {
-        'state_dict': new_state_dict,
-        # 复制其他可能的元信息，例如optimizer等
-        'meta': checkpoint.get('meta', {}),
-        'optimizer': checkpoint.get('optimizer', None),
-        'scheduler': checkpoint.get('scheduler', None),
-    }
+        # 处理neck
+        elif key.startswith('neck'):
+            new_key_base = key.replace('neck', 'neck_base', 1)
+            new_key_novel = key.replace('neck', 'neck_novel', 1)
+            new_state_dict[new_key_base] = value
+            new_state_dict[new_key_novel] = value
+
+        # 处理decode_head
+        elif key.startswith('decode_head'):
+            new_key_base = key.replace('decode_head', 'decode_head_base', 1)
+            new_key_novel = key.replace('decode_head', 'decode_head_novel', 1)
+            new_state_dict[new_key_base] = value
+            new_state_dict[new_key_novel] = value
+
+        # 保留其他未修改的键值
+        else:
+            new_state_dict[key] = value
 
     # 保存新的checkpoint
+    new_checkpoint = {'state_dict': new_state_dict}
     torch.save(new_checkpoint, new_checkpoint_path)
-    print(f'New checkpoint saved to {new_checkpoint_path}')
+    print(f"新的checkpoint已保存到 {new_checkpoint_path}")
 
 # 使用示例
-original_checkpoint_path = 'work_dirs/nwpu/base_training/tfa_r101_fpn_nwpu-split1_base-training_resize-bs8-s4-0/iter_20000.pth'
-new_checkpoint_path = 'work_dirs/nwpu/base_training/tfa_r101_fpn_nwpu-split1_base-training_resize-bs8-s4-0/iter_20000_sep_novel.pth'
+original_checkpoint_path = 'work_dirs/isaid/base_training/split2/r101_fpn_fsd_isaid-split2_base-training-0/iter_80000.pth'
+new_checkpoint_path = 'work_dirs/isaid/base_training/split2/r101_fpn_fsd_isaid-split2_base-training-0/iter_80000_novel.pth'
 convert_checkpoint(original_checkpoint_path, new_checkpoint_path)
