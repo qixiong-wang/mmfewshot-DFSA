@@ -32,22 +32,22 @@ class FewShotSSeg_iSAIDDataset(CustomDataset):
     #            [0, 127, 191], [0, 127, 255], [0, 100, 155]]
 
     PALETTE =[
-    [0, 0, 0],        
-    [34, 177, 76],  
-    [160, 160, 255],  
-    [255, 160, 160], 
-    [160, 255, 160],   
-    [0, 63, 191],  
-    [160, 50, 50], 
-    [255, 160, 255],   
-    [0, 127, 127],  
-    [255, 255, 50],
-    [0, 0, 191],
-    [185, 255, 185],
-    [0, 191, 127], 
-    [0, 127, 191], 
-    [0, 127, 255],  
-    [0, 100, 155]
+    [0, 0, 0],          ## background 
+    [34, 177, 76],      ## ship
+    [160, 160, 255],    ## store_tank
+    [255, 160, 160],    ## baseball_diamond
+    [160, 255, 160],    ## tennis_court
+    [0, 63, 191],       ## basketball_court
+    [160, 50, 50],      ## Ground_Track_Field
+    [255, 160, 255],    ## Bridge
+    [0, 127, 127],      ## Large_Vehicle
+    [255, 255, 50],     ## Small_Vehicle
+    [0, 0, 191],        ## Helicopter
+    [63, 72, 204],    ## Swimming_pool
+    [0, 191, 127],      ## Roundabout
+    [0, 127, 191],      ## Soccer_ball_field
+    [0, 127, 255],      ## plane
+    [0, 100, 155]       ## Harbor
     ]
     def __init__(self,
                 num_novel_shots=None,
